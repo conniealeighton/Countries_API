@@ -9,20 +9,22 @@ const Munros = function(url){
 Munros.prototype.getData = function () {
   const request = new Request(this.url);
   request.get().then(data => {
+    this.munros = data;
     PubSub.publish('Munros:data-ready', data);
   });
 
 };
 
+Munros.prototype.bindEvents = function() {
+  PubSub.subscribe('SelectView:selection', (event) => {
+    PubSub.publish('Munros:data-ready', this.filterMunros(event.detail));
+  })
+}
+
+Munros.prototype.filterMunros = function(region) {
+  return this.munros.filter((munro) => {
+    return munro.region === region;
+  })
+}
+
 module.exports = Munros;
-
-
-
-// Countries.prototype.getData = function () {
-//   const request = new Request(this.url);
-//   // request.get >>> (data => this.handleData(data));
-//   request.get().then(data => this.handleData(data))
-//   .catch((err) => {
-//     console.log(`There has been an error` + err);
-//   });
-// };
