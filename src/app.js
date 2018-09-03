@@ -1,11 +1,17 @@
-const Pokemon = require('./models/pokemon.js');
-const PokemonSelectView = require('./views/select_view.js')
+const Countries = require('./models/Countries.js');
+const SelectView = require('./views/select_view.js');
+const CountryListView = require('./views/countries_list_view.js');
 
 document.addEventListener('DOMContentLoaded', () => {
-  const pokemonSelectView = new PokemonSelectView;
-  pokemonSelectView.bindEvents();
+  const selectElement = document.querySelector('select#capital-select');
+  const selectView = new SelectView(selectElement);
+  selectView.bindEvents();
 
-  const pokemon = new Pokemon;
-  pokemon.bindEvents();
-  pokemon.getData();
-});
+  const listContainer = document.querySelector('#country-list');
+  const munroListView = new CountryListView(listContainer);
+  munroListView.bindEvents();
+
+  const countries = new Countries;
+  countries.bindEvents();
+  countries.getData();
+})

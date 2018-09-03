@@ -1,19 +1,33 @@
-const RequestHelper = require('../helpers/request_helper.js');
-const PubSub = require('../helpers/pub_sub.js');
+const PubSub = require('../helpers/pub_sub');
 
-const PokemonSelectView = function() {
+const SelectView = function (selectElement) {
+  this.selectElement = selectElement;
+};
 
-}
+SelectView.prototype.bindEvents = function () {
+  PubSub.subscribe('Countries:capital-ready', (evt) => {
+    this.populateSelect(evt.detail);
+  });
 
-PokemonSelectView.prototype.bindEvents = function () {
-  PubSub.subscribe('Pokemon:typesUrl', (evt) => {
-    this.getTypes(evt);
+  this.selectElement.addEventListener('change', (evt) => {
+    console.log(evt);
+    const selectedIndex = evt.target.value;
+    PubSub.publish('SelectView:change', selectedIndex);
+  });
+};
+
+SelectView.prototype.populateSelect = function (capital) {
+  capital.forEach((capital, index) => {
+    const option = this.createCapitalOption(capital, index);
+    this.selectElement.appendChild(option);
   })
 };
 
-PokemonSelectView.prototype.getTypes = function (typesUrl) {
-  console.log(typesUrl.detail);
+SelectView.prototype.createCapitalOption = function (capital, index) {
+  const option = document.createElement('option');
+  option.textContent = capital;
+  option.value = index;
+  return option;
 };
-// test
 
-module.exports = PokemonSelectView;
+module.exports = SelectView;
